@@ -1,5 +1,8 @@
-This is a bundle to deploy to multiple hosts at once using the git
-strategy. It provides a command to do it easily.
+Deployer Bundle
+===============
+
+This is a Symfony bundle to deploy to multiple hosts at once using the
+git strategy. It provides a command to do it easily.
 
 Each host may have independent configuration, i.e., you may want to
 checkout a development branch in your staging server, whereas you may
