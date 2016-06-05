@@ -1,0 +1,21 @@
+{
+    "name": "rrb/deployer-bundle",
+    "description": "A deployer for Symfony framework using Python fabric",
+    "keywords": [ "deployer", "symfony", "fabric"],
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "rubenrubiob\\DeployerBundle\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "Rubén Rubio Barrera",
+            "email": "ruben.rubio.barrera@gmail.com"
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+services:
+    rrb.deployer.cli_generator:
+        class: Rrb\DeployerBundle\Service\CliGenerator
+        arguments:
+            container: "@service_container"
