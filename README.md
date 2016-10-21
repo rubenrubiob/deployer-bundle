@@ -158,7 +158,7 @@ You may also force a task execution besides deploy, overriding the default
 configuration:
 
 ```bash
-bin/console rrb:deployer:deploy host_name_1 --update-composer
+bin/console rrb:deployer:deploy host_name_1 --composer-update
 ```
 
 Check the [command reference](#command-reference) to know all available
