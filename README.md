@@ -205,6 +205,7 @@ rrb_deployer:
                 composer_update:
                     enabled:              false
                     bin:                  composer
+                    memory_limit:         null
                 assets_install:
                     enabled:              false
                     symlink:              true

@@ -123,10 +123,21 @@ class CliGenerator
      */
     private function generateComposerUpdateTask($host)
     {
-        return sprintf(
-            'composer_update:%s',
+        $command = sprintf(
+            'composer_update:%s,%s',
+            $this->container->getParameter("rrb_deployer.hosts.$host.environment.php"),
             $this->container->getParameter("rrb_deployer.hosts.$host.tasks.composer.bin")
         );
+
+        if ($this->container->getParameter("rrb_deployer.hosts.$host.tasks.composer.memory_limit") !== null) {
+            $command = sprintf(
+                '%s,%s',
+                $command,
+                $this->container->getParameter("rrb_deployer.hosts.$host.tasks.composer.memory_limit")
+            );
+        }
+
+        return $command;
     }
 
     /**

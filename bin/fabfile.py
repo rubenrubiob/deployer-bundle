@@ -43,13 +43,22 @@ def cache_clear(php_bin, console_bin, environment):
     _run_command(command, message)
 
 
-def composer_update(composer_bin):
+def composer_update(php_bin, composer_bin, memory_limit=False):
     """
     Updates composer for project
+    :param php_bin: path to php executable
     :param composer_bin: path to composer executable
+    :param memory_limit: memory limit for composer update
     :return:
     """
-    command = '%s update' % composer_bin
+    if memory_limit:
+        command = '%s -d memory_limit=%s %s update' % (php_bin, memory_limit, composer_bin)
+    else:
+        command = '%s %s update' % (php_bin, composer_bin)
+
+    print command
+    exit(0)
+
     message = u'Updating composer'
     _run_command(command, message)
 

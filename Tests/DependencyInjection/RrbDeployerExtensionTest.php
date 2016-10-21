@@ -240,6 +240,7 @@ class RrbDeployerExtensionTest extends \PHPUnit_Framework_TestCase
 
             $this->assertEquals(false, $container->getParameter("rrb_deployer.hosts.$host.tasks.composer.enabled"));
             $this->assertEquals('composer', $container->getParameter("rrb_deployer.hosts.$host.tasks.composer.bin"));
+            $this->assertEquals(null, $container->getParameter("rrb_deployer.hosts.$host.tasks.composer.memory_limit"));
 
             // Test assets install
             $this->assertEquals(
@@ -454,6 +455,7 @@ class RrbDeployerExtensionTest extends \PHPUnit_Framework_TestCase
                             'composer_update' => [
                                 'enabled'   => true,
                                 'bin'       => 'composer-bin',
+                                'memory_limit' => -1
                             ],
                             'assets_install' => [
                                 'enabled'   => true,
@@ -486,9 +488,11 @@ class RrbDeployerExtensionTest extends \PHPUnit_Framework_TestCase
         // Test composer update
         $this->assertEquals(true, $container->hasParameter("rrb_deployer.hosts.host1.tasks.composer.enabled"));
         $this->assertEquals(true, $container->hasParameter("rrb_deployer.hosts.host1.tasks.composer.bin"));
+        $this->assertEquals(true, $container->hasParameter("rrb_deployer.hosts.host1.tasks.composer.memory_limit"));
 
         $this->assertEquals(true, $container->getParameter("rrb_deployer.hosts.host1.tasks.composer.enabled"));
         $this->assertEquals('composer-bin', $container->getParameter("rrb_deployer.hosts.host1.tasks.composer.bin"));
+        $this->assertEquals(-1, $container->getParameter("rrb_deployer.hosts.host1.tasks.composer.memory_limit"));
 
         // Test assets install
         $this->assertEquals(

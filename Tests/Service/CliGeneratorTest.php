@@ -56,7 +56,7 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
         $command = $service->deploy('host1', $options);
 
         $this->checkBaseCommand($command);
-        $this->assertEquals(true, preg_match('/composer_update:composer/', $command));
+        $this->assertEquals(true, preg_match('/composer_update:php,composer/', $command));
         $this->assertEquals(
             true,
             preg_match(
@@ -91,7 +91,7 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, preg_match('/-p password/', $command));
 
         // Check tasks
-        $this->assertEquals(true, preg_match('/composer_update:composer-bin/', $command));
+        $this->assertEquals(true, preg_match('/composer_update:php,composer-bin,-1/', $command));
         $this->assertEquals(
             true,
             preg_match(
@@ -187,6 +187,7 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
                                 'composer_update' => [
                                     'enabled'   => true,
                                     'bin'       => 'composer-bin',
+                                    'memory_limit' => -1,
                                 ],
                                 'assets_install' => [
                                     'enabled'   => true,

@@ -64,6 +64,10 @@ class RrbDeployerExtension extends Extension
                 "rrb_deployer.hosts.$name.tasks.composer.bin",
                 $hostConfig['tasks']['composer_update']['bin']
             );
+            $container->setParameter(
+                "rrb_deployer.hosts.$name.tasks.composer.memory_limit",
+                $hostConfig['tasks']['composer_update']['memory_limit']
+            );
 
             // Assets install
             $container->setParameter(
