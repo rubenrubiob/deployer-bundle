@@ -31,20 +31,7 @@ class CliGenerator
      */
     public function deploy($host, $options = [])
     {
-        $configOptions = [
-            'composer_update'       => $this->container->getParameter(
-                "rrb_deployer.hosts.$host.tasks.composer.enabled"
-            ),
-            'assets_install'        => $this->container->getParameter(
-                "rrb_deployer.hosts.$host.tasks.assets_install.enabled"
-            ),
-            'database_migration'    => $this->container->getParameter(
-                "rrb_deployer.hosts.$host.tasks.database_migration.enabled"
-            ),
-        ];
-
-        // Options provided as arguments have priority over options in config
-        $options += $configOptions;
+        $options = $this->getConfigOptions($host, $options);
 
         // Set base command, that will be updated with options if there is any
         $cli = sprintf(
@@ -53,6 +40,36 @@ class CliGenerator
             $this->generatePullTask($host)
         );
 
+        return $this->generateTasksCommand($cli, $host, $options);
+    }
+
+    /**
+     * @param string $host
+     * @param array  $options
+     * @return string
+     */
+    public function tag($host, $options = [])
+    {
+        $options = $this->getConfigOptions($host, $options);
+
+        // Set base command, that will be updated with options if there is any
+        $cli = sprintf(
+            '%s %s',
+            $this->generateBaseCommand($host, $options),
+            $this->generateTagTask($options)
+        );
+
+        return $this->generateTasksCommand($cli, $host, $options);
+    }
+
+    /**
+     * @param string $cli
+     * @param string $host
+     * @param array  $options
+     * @return string
+     */
+    private function generateTasksCommand($cli, $host, $options)
+    {
         // Check if we have to generate the composer update task
         if ($options['composer_update']) {
             $cli = sprintf(
@@ -101,6 +118,21 @@ class CliGenerator
             $this->container->getParameter("rrb_deployer.hosts.$host.git.remote"),
             $this->container->getParameter("rrb_deployer.hosts.$host.git.branch")
         );
+    }
+
+    /**
+     * @param array $options
+     * @return string
+     */
+    private function generateTagTask($options)
+    {
+        $command = 'tag';
+
+        if (array_key_exists('tag', $options) && $options['tag']) {
+            $command = sprintf('%s:%s', $command, $options['tag']);
+        }
+
+        return $command;
     }
 
     /**
@@ -212,5 +244,32 @@ class CliGenerator
         }
 
         return $command;
+    }
+
+    /**
+     *
+     *
+     * @param string $host
+     * @param array  $options
+     * @return array
+     */
+    private function getConfigOptions($host, $options = [])
+    {
+        $configOptions = [
+            'composer_update'       => $this->container->getParameter(
+                "rrb_deployer.hosts.$host.tasks.composer.enabled"
+            ),
+            'assets_install'        => $this->container->getParameter(
+                "rrb_deployer.hosts.$host.tasks.assets_install.enabled"
+            ),
+            'database_migration'    => $this->container->getParameter(
+                "rrb_deployer.hosts.$host.tasks.database_migration.enabled"
+            ),
+        ];
+
+        // Options provided as arguments have priority over options in config
+        $options += $configOptions;
+
+        return $options;
     }
 }

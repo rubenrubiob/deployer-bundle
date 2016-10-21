@@ -38,7 +38,7 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
         $command = $service->deploy('host1');
 
         // Check command with default config
-        $this->checkBaseCommand($command);
+        $this->checkDeployBaseCommand($command);
 
         // Check that options do not exist
         $this->assertEquals(false, preg_match('/verbose/', $command));
@@ -55,7 +55,7 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
         ];
         $command = $service->deploy('host1', $options);
 
-        $this->checkBaseCommand($command);
+        $this->checkDeployBaseCommand($command);
         $this->assertEquals(true, preg_match('/composer_update:php,composer/', $command));
         $this->assertEquals(
             true,
@@ -85,7 +85,89 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
         $command = $service->deploy('host1');
 
         // Check basic command
-        $this->checkBaseCommand($command);
+        $this->checkDeployBaseCommand($command);
+
+        // Check that password for host is set
+        $this->assertEquals(true, preg_match('/-p password/', $command));
+
+        // Check tasks
+        $this->assertEquals(true, preg_match('/composer_update:php,composer-bin,-1/', $command));
+        $this->assertEquals(
+            true,
+            preg_match(
+                sprintf('/assets_install:php,%s,webpath,1,1/', preg_quote(Misc::getConsolePath(), '/')),
+                $command
+            )
+        );
+        $this->assertEquals(
+            true,
+            preg_match(
+                sprintf('/database_migration:php,%s/', preg_quote(Misc::getConsolePath(), '/')),
+                $command
+            )
+        );
+    }
+
+    /**
+     * Test tag method
+     */
+    public function testTagDefaultConfig()
+    {
+        // Get a container with default config
+        $container = $this->getContainer();
+
+        $service = $container->get('rrb.deployer.cli_generator');
+        $command = $service->tag('host1');
+
+        // Check command with default config
+        $this->checkTagBaseCommand($command);
+
+        // Check that options do not exist
+        $this->assertEquals(false, preg_match('/verbose/', $command));
+        $this->assertEquals(false, preg_match('/composer_update/', $command));
+        $this->assertEquals(false, preg_match('/assets_install/', $command));
+        $this->assertEquals(false, preg_match('/database_migration/', $command));
+
+        // Check command overriding default options, i.e., forcing tasks
+        $options = [
+            'verbose' => true,
+            'composer_update' => true,
+            'assets_install' => true,
+            'database_migration' => true,
+        ];
+        $command = $service->tag('host1', $options);
+
+        $this->checkTagBaseCommand($command);
+        $this->assertEquals(true, preg_match('/composer_update:php,composer/', $command));
+        $this->assertEquals(
+            true,
+            preg_match(
+                sprintf('/assets_install:php,%s,web,1,/', preg_quote(Misc::getConsolePath(), '/')),
+                $command
+            )
+        );
+        $this->assertEquals(
+            true,
+            preg_match(
+                sprintf('/database_migration:php,%s/', preg_quote(Misc::getConsolePath(), '/')),
+                $command
+            )
+        );
+    }
+
+    /**
+     * Test the generation of tag with tasks forced to true in config
+     */
+    public function testTagWithTasks()
+    {
+        // Get a new container with all tasks forced to be true
+        $container = $this->getContainer(true);
+
+        $service = $container->get('rrb.deployer.cli_generator');
+        $command = $service->tag('host1');
+
+        // Check basic command
+        $this->checkTagBaseCommand($command);
 
         // Check that password for host is set
         $this->assertEquals(true, preg_match('/-p password/', $command));
@@ -111,7 +193,7 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $command
      */
-    private function checkBaseCommand($command)
+    private function checkDeployBaseCommand($command)
     {
         $this->assertEquals(
             true,
@@ -131,6 +213,39 @@ class CliGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             true,
             preg_match('/pull:origin,master/', $command)
+        );
+        $this->assertEquals(
+            true,
+            preg_match(
+                sprintf('/cache_clear:php,%s,prod/', preg_quote(Misc::getConsolePath(), '/')),
+                $command
+            )
+        );
+    }
+
+    /**
+     * @param string $command
+     */
+    private function checkTagBaseCommand($command)
+    {
+        $this->assertEquals(
+            true,
+            preg_match(
+                sprintf('/^fab -f %s/', preg_quote(realpath(__DIR__.'/../../bin/fabfile.py'), '/')),
+                $command
+            )
+        );
+        $this->assertEquals(
+            true,
+            preg_match('/--set path=\/src\//', $command)
+        );
+        $this->assertEquals(
+            true,
+            preg_match('/-H user@server:22/', $command)
+        );
+        $this->assertEquals(
+            true,
+            preg_match('/tag/', $command)
         );
         $this->assertEquals(
             true,

@@ -30,6 +30,24 @@ def pull(remote, branch):
     _run_command(command, message)
 
 
+def tag(version=False):
+    """
+    Checkouts a tag to a specific version or to the latest one
+    :param version: version number to deploy to, if any
+    :return:
+    """
+    command = 'git fetch --tags && git checkout %s'
+
+    if version:
+        command %= version
+        message = u'Updating source code to tag %s' % version
+    else:
+        command %= '$(git describe --tags `git rev-list --tags --max-count=1`)'
+        message = u'Updating source code to latest tag'
+
+    _run_command(command, message)
+
+
 def cache_clear(php_bin, console_bin, environment):
     """
     Clears the cache for required environment

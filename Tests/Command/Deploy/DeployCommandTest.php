@@ -1,8 +1,8 @@
 <?php
 
-namespace Rrb\DeployerBundle\Tests\Command;
+namespace Rrb\DeployerBundle\Tests\Command\Deploy;
 
-use Rrb\DeployerBundle\Command\DeployCommand;
+use Rrb\DeployerBundle\Command\Deploy\DeployCommand;
 use Rrb\DeployerBundle\DependencyInjection\RrbDeployerExtension;
 
 use Symfony\Component\Console\Command\Command;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\Output;
 
 /**
  * Class DeployCommandTest
- * @package Rrb\DeployerBundle\Tests\Command
+ * @package Rrb\DeployerBundle\Tests\Command\Deploy
  */
 class DeployCommandTest extends \PHPUnit_Framework_TestCase
 {
